@@ -9,6 +9,7 @@ function OptionsContainer({
   setSelectedOption,
   hasError,
   setHasError,
+  showResult,
 }) {
   const location = useLocation();
   const { quizzSelectedByUser } = location.state;
@@ -31,8 +32,8 @@ function OptionsContainer({
           isSelected={selectedOption === optionText}
           onSelect={() => setSelectedOption(optionText)}
           key={index}
-          isCorrect={isCorrect}
-          hasError={hasError && selectedOption === optionText}
+          isCorrect={showResult && optionText === currentQuestion.answer}
+          hasError={showResult && hasError && selectedOption === optionText}
           letter={String.fromCharCode(65 + index)}
           text={optionText}
         />

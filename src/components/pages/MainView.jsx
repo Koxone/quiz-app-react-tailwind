@@ -15,29 +15,30 @@ function MainView() {
   const [selectedOption, setSelectedOption] = useState(null);
   const [hasError, setHasError] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(1);
+  const [showResult, setShowResult] = useState(false);
 
   const progressPercent = questionNumber * 10;
 
-  const errorHandler = () => {
+  const stopHandler = () => {
+    if (questionNumber >= 10) return;
+
     const currentQuiz = quizData.quizzes.find(
       (quiz) => quiz.title === quizzSelectedByUser,
     );
-
     const currentQuestion = currentQuiz.questions[questionNumber - 1];
-    if (selectedOption === currentQuestion.answer) {
-      setHasError(false);
-      return false;
-    } else {
-      setHasError(true);
-      return true;
-    }
-  };
 
-  const stopHandler = () => {
-    if (questionNumber >= 10) return;
-    const error = errorHandler();
-    setQuestionNumber((prev) => prev + 1);
-    setSelectedOption(null);
+    const isCorrect = selectedOption === currentQuestion.answer;
+
+    setHasError(!isCorrect);
+    setShowResult(true); // activa el resultado visual
+
+    // espera 2 segundos y luego avanza
+    setTimeout(() => {
+      setShowResult(false);
+      setHasError(false);
+      setSelectedOption(null);
+      setQuestionNumber((prev) => prev + 1);
+    }, 2000);
   };
 
   return (
@@ -53,6 +54,7 @@ function MainView() {
         selectedOption={selectedOption}
         setHasError={setHasError}
         setSelectedOption={setSelectedOption}
+        showResult={showResult}
       />
       <MainButton onClick={() => stopHandler()} text="Submit Answer" />
     </div>
