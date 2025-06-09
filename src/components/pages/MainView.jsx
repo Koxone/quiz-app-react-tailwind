@@ -12,15 +12,32 @@ function MainView() {
 
   const { quizzSelectedByUser } = location.state;
 
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [hasError, setHasError] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(1);
 
   const progressPercent = questionNumber * 10;
 
-  const stopHandler = () => {
-    if (questionNumber >= 10) {
-      return;
+  const errorHandler = () => {
+    const currentQuiz = quizData.quizzes.find(
+      (quiz) => quiz.title === quizzSelectedByUser,
+    );
+
+    const currentQuestion = currentQuiz.questions[questionNumber - 1];
+    if (selectedOption === currentQuestion.answer) {
+      setHasError(false);
+      return false;
+    } else {
+      setHasError(true);
+      return true;
     }
+  };
+
+  const stopHandler = () => {
+    if (questionNumber >= 10) return;
+    const error = errorHandler();
     setQuestionNumber((prev) => prev + 1);
+    setSelectedOption(null);
   };
 
   return (
@@ -30,7 +47,13 @@ function MainView() {
         number={questionNumber}
         navbar={`${progressPercent}%`}
       />
-      <OptionsContainer number={questionNumber} />
+      <OptionsContainer
+        number={questionNumber}
+        hasError={hasError}
+        selectedOption={selectedOption}
+        setHasError={setHasError}
+        setSelectedOption={setSelectedOption}
+      />
       <MainButton onClick={() => stopHandler()} text="Submit Answer" />
     </div>
   );
