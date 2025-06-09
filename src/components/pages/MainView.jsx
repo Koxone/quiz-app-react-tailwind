@@ -9,9 +9,20 @@ import { useState } from "react";
 
 function MainView() {
   const location = useLocation();
+
   const { quizzSelectedByUser } = location.state;
+
   const [questionNumber, setQuestionNumber] = useState(1);
+
   const progressPercent = questionNumber * 10;
+
+  const stopHandler = () => {
+    if (questionNumber >= 10) {
+      return;
+    }
+    setQuestionNumber((prev) => prev + 1);
+  };
+
   return (
     <div className="flex flex-col items-center justify-center gap-8">
       <MainHeader text="Quiz Time" src="html" />
@@ -20,10 +31,7 @@ function MainView() {
         navbar={`${progressPercent}%`}
       />
       <OptionsContainer number={questionNumber} />
-      <MainButton
-        onClick={() => setQuestionNumber((prev) => prev + 1)}
-        text="Submit Answer"
-      />
+      <MainButton onClick={() => stopHandler()} text="Submit Answer" />
     </div>
   );
 }
