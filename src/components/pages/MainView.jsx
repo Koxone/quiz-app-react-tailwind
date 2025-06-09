@@ -7,7 +7,6 @@ import quizData from "/data";
 import { useState } from "react";
 
 function MainView() {
-  
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -18,6 +17,7 @@ function MainView() {
   const [questionNumber, setQuestionNumber] = useState(1);
   const [showResult, setShowResult] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [userScore, setUserScore] = useState(0);
 
   const progressPercent = questionNumber * 10;
 
@@ -31,11 +31,16 @@ function MainView() {
   const stopHandler = () => {
     if (isLocked || questionNumber >= 10) {
       setTimeout(() => {
-        navigate("/complete", { state: { quizzSelected: quizzSelectedByUser, score: 8 } });
+        navigate("/complete", {
+          state: { quizzSelected: quizzSelectedByUser, score: userScore },
+        });
       }, 1000);
     }
 
     setHasError(!isCorrect);
+    if(isCorrect) {
+      setUserScore((prev) => prev + 1)
+    }
     setShowResult(true);
     setIsLocked(true);
 

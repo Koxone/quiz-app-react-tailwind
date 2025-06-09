@@ -14,7 +14,6 @@ function CompleteView() {
   console.log(quizzSelected);
 
   const quizzes = quizData.quizzes;
-  //   const currentQuiz =
 
   return (
     <div className="flex h-screen flex-col items-center">
