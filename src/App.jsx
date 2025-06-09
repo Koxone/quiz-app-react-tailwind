@@ -3,6 +3,7 @@ import "./index.css";
 import Layout from "./styles/layout";
 import MainView from "./components/pages/MainView";
 import WelcomeView from "./components/pages/WelcomeView";
+import CompleteView from "./components/pages/CompleteView";
 
 function App() {
   return (
@@ -21,6 +22,14 @@ function App() {
           element={
             <Layout>
               <MainView />
+            </Layout>
+          }
+        />
+        <Route
+          path="/complete"
+          element={
+            <Layout>
+              <CompleteView />
             </Layout>
           }
         />

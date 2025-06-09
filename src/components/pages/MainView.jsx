@@ -1,5 +1,4 @@
-import { useLocation } from "react-router-dom";
-import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import QuestionContainer from "../containers/QuestionContainer";
 import OptionsContainer from "../containers/OptionsContainer";
 import MainButton from "../buttons/MainButton";
@@ -8,7 +7,9 @@ import quizData from "/data";
 import { useState } from "react";
 
 function MainView() {
+  
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { quizzSelectedByUser } = location.state;
 
@@ -16,34 +17,40 @@ function MainView() {
   const [hasError, setHasError] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [showResult, setShowResult] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
 
   const progressPercent = questionNumber * 10;
 
+  const currentQuiz = quizData.quizzes.find(
+    (quiz) => quiz.title === quizzSelectedByUser,
+  );
+  const currentQuestion = currentQuiz.questions[questionNumber - 1];
+
+  const isCorrect = selectedOption === currentQuestion.answer;
+
   const stopHandler = () => {
-    if (questionNumber >= 10) return;
-
-    const currentQuiz = quizData.quizzes.find(
-      (quiz) => quiz.title === quizzSelectedByUser,
-    );
-    const currentQuestion = currentQuiz.questions[questionNumber - 1];
-
-    const isCorrect = selectedOption === currentQuestion.answer;
+    if (isLocked || questionNumber >= 10) {
+      setTimeout(() => {
+        navigate("/complete", { state: { quizzSelected: quizzSelectedByUser, score: 8 } });
+      }, 1000);
+    }
 
     setHasError(!isCorrect);
-    setShowResult(true); // activa el resultado visual
+    setShowResult(true);
+    setIsLocked(true);
 
-    // espera 2 segundos y luego avanza
     setTimeout(() => {
       setShowResult(false);
       setHasError(false);
       setSelectedOption(null);
       setQuestionNumber((prev) => prev + 1);
+      setIsLocked(false);
     }, 2000);
   };
 
   return (
     <div className="flex flex-col items-center justify-center gap-8">
-      <MainHeader text="Quiz Time" src="html" />
+      <MainHeader title={quizzSelectedByUser} src={currentQuiz.icon} />
       <QuestionContainer
         number={questionNumber}
         navbar={`${progressPercent}%`}
